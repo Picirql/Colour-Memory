@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light">
+  <title>Colour Memory Game</title>
+  <meta name="description" content="How good is your colour memory? A 2-minute game.">
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23808080'/%3E%3Crect x='4' y='4' width='10' height='10' fill='%23f9557f'/%3E%3Crect x='18' y='4' width='10' height='10' fill='%239b9425'/%3E%3Crect x='4' y='18' width='10' height='10' fill='%234998c7'/%3E%3Crect x='18' y='18' width='10' height='10' fill='%23bc77c8'/%3E%3C/svg%3E">
+</head>
+<body>
+  <canvas id="stage" hidden></canvas>
+
+  <!-- 9.1 Welcome / consent -->
+  <section id="screen-welcome" class="screen" hidden>
+    <div class="card">
+      <div class="swatches" aria-hidden="true"><span style="background:#f9557f"></span><span style="background:#e2712d"></span><span style="background:#9b9425"></span><span style="background:#4ba07a"></span><span style="background:#4998c7"></span><span style="background:#bc77c8"></span></div>
+      <h1>How good is your colour memory?</h1>
+      <p class="lead">A 2-minute game. Coloured squares flash for a split second &ndash; remember them, then pick the colour you saw.</p>
+      <button class="btn primary" data-action="play">Play</button>
+      <details class="about">
+        <summary>About this study</summary>
+        <p class="about-text"></p>
+      </details>
+    </div>
+  </section>
+
+  <!-- 9.2 Profile -->
+  <section id="screen-profile" class="screen" hidden>
+    <div class="card">
+      <h2>About you <span class="muted">(all optional)</span></h2>
+      <div class="field">
+        <label for="f-nickname">Nickname</label>
+        <input id="f-nickname" type="text" maxlength="16" autocomplete="nickname" autocapitalize="off" spellcheck="false" placeholder="e.g. colour_ninja">
+        <small class="help">Optional. If you choose one, it appears next to your best score on the public leaderboard (top 10 players). Leave it blank to stay off the leaderboard &ndash; your games still count for the study. 2&ndash;16 letters, digits or _.</small>
+        <small class="error" id="e-nickname" hidden>Use 2&ndash;16 letters, digits or underscores only.</small>
+      </div>
+      <div class="field">
+        <label for="f-email">Email</label>
+        <input id="f-email" type="email" autocomplete="off" autocapitalize="off" spellcheck="false" inputmode="email">
+        <small class="help">Optional. Lets us link your games if you play on another device. We only store a scrambled code.</small>
+        <small class="error" id="e-email" hidden>That doesn't look like an email address.</small>
+      </div>
+      <fieldset class="field">
+        <legend>Age group</legend>
+        <div class="chips" data-name="age_band">
+          <button type="button" class="chip" data-value="18_21">18&ndash;21</button>
+          <button type="button" class="chip" data-value="22_25">22&ndash;25</button>
+          <button type="button" class="chip" data-value="26_35">26&ndash;35</button>
+          <button type="button" class="chip" data-value="36_plus">36+</button>
+          <button type="button" class="chip" data-value="na">Prefer not to say</button>
+        </div>
+      </fieldset>
+      <fieldset class="field">
+        <legend>Do you have any form of colour blindness?</legend>
+        <div class="chips" data-name="colour_vision">
+          <button type="button" class="chip" data-value="normal">No</button>
+          <button type="button" class="chip" data-value="deficient">Yes</button>
+          <button type="button" class="chip" data-value="unsure">Not sure</button>
+          <button type="button" class="chip" data-value="na">Prefer not to say</button>
+        </div>
+      </fieldset>
+      <button class="btn primary" data-action="profile-continue">Continue</button>
+    </div>
+  </section>
+
+  <!-- 9.3 Instructions -->
+  <section id="screen-instructions" class="screen" hidden>
+    <div class="card">
+      <h2>How to play</h2>
+      <ol class="steps">
+        <li>Keep your eyes on the <b>+</b> in the middle.</li>
+        <li>Coloured squares will flash very briefly. Try to remember their colours.</li>
+        <li>One spot will be outlined. Pick the colour that was there on the colour wheel. Move around the wheel to preview, then click / lift your finger.</li>
+        <li>No rush &ndash; accuracy is what counts. Harder rounds (more squares) score more.</li>
+      </ol>
+      <button class="btn primary" data-action="instructions-start">Start</button>
+    </div>
+  </section>
+
+  <!-- 9.4 After practice -->
+  <section id="screen-practice-done" class="screen on-grey" hidden>
+    <div class="card">
+      <h2>Practice done &mdash; now the real game: 24 rounds.</h2>
+      <button class="btn primary" data-action="main-start">Start</button>
+    </div>
+  </section>
+
+  <!-- 9.6 Results -->
+  <section id="screen-results" class="screen" hidden>
+    <div class="card">
+      <p class="muted center">Your score</p>
+      <p class="score" id="r-score">0</p>
+      <p class="center pb" id="r-pb"></p>
+      <h3>How you did</h3>
+      <div id="r-breakdown" class="breakdown"></div>
+      <p class="muted small">Most people find 6+ squares really hard &mdash; that&rsquo;s the point!</p>
+      <div id="r-leaderboard-wrap" hidden>
+        <h3>Leaderboard</h3>
+        <ol id="r-leaderboard" class="leaderboard"></ol>
+      </div>
+      <button class="btn primary" data-action="play-again">Play again</button>
+      <div class="links">
+        <button class="link" data-action="edit-profile">Edit profile</button>
+        <button class="link" data-action="how-to-play">How to play</button>
+        <button class="link" data-action="about">How this works</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- About (from "How this works") -->
+  <section id="screen-about" class="screen" hidden>
+    <div class="card">
+      <h2>How this works</h2>
+      <p class="about-text"></p>
+      <button class="btn" data-action="back">Back</button>
+    </div>
+  </section>
+
+  <!-- Game ended early (tab hidden too long) -->
+  <section id="screen-ended" class="screen" hidden>
+    <div class="card">
+      <h2>Game ended</h2>
+      <p>The game was paused for more than a minute, so it was stopped. Thanks for the rounds you played!</p>
+      <button class="btn primary" data-action="play-again">Play again</button>
+    </div>
+  </section>
+
+  <!-- Viewport too small (shown above everything) -->
+  <section id="screen-small" class="screen overlay" hidden>
+    <div class="card">
+      <h2>Need a bit more space</h2>
+      <p>Please enlarge the window or rotate your phone to continue.</p>
+    </div>
+  </section>
+
+  <div id="debug" hidden></div>
+  <noscript><p style="padding:16px">This game needs JavaScript.</p></noscript>
+
+  <script type="module" src="game.js"></script>
+</body>
+</html>
