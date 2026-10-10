@@ -19,6 +19,7 @@
       <h1>How good is your colour memory?</h1>
       <p class="lead">A 2-minute game. Coloured squares flash for a split second &ndash; remember them, then pick the colour you saw.</p>
       <button class="btn primary" data-action="play">Play</button>
+      <button class="btn" data-action="leaderboard">Leaderboard</button>
       <details class="about">
         <summary>About this study</summary>
         <p class="about-text"></p>
@@ -106,6 +107,18 @@
         <button class="link" data-action="how-to-play">How to play</button>
         <button class="link" data-action="about">How this works</button>
       </div>
+    </div>
+  </section>
+
+  <!-- Leaderboard (from the start screen) -->
+  <section id="screen-leaderboard" class="screen" hidden>
+    <div class="card">
+      <h2>Leaderboard</h2>
+      <p class="muted small">Top 10 players by best score. Choose a nickname in your profile to appear here.</p>
+      <p id="lb-status" class="muted center"></p>
+      <ol id="lb-list" class="leaderboard"></ol>
+      <button class="btn primary" data-action="play">Play</button>
+      <button class="btn" data-action="back">Back</button>
     </div>
   </section>
 

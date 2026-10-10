@@ -344,23 +344,40 @@ async function showResults() {
   await whenIdle(6000);
   const rows = await fetchLeaderboard();
   if (rows && rows.length) {
-    const me = getProfile().nickname;
-    const ol = $('#r-leaderboard');
-    ol.replaceChildren(...rows.map((r) => {
-      const li = document.createElement('li');
-      if (me && r.nickname === me) li.className = 'me';
-      const name = document.createElement('span');
-      name.textContent = r.nickname;
-      const s = document.createElement('span');
-      s.className = 's';
-      s.textContent = Number(r.best_score).toLocaleString('en-US');
-      li.append(name, s);
-      return li;
-    }));
+    fillLeaderboard($('#r-leaderboard'), rows);
     $('#r-leaderboard-wrap').hidden = false;
   }
 
   if (FLAGS.sim && ++simGamesPlayed < FLAGS.simGames) setTimeout(() => playGame(), 1500);
+}
+
+function fillLeaderboard(ol, rows) {
+  const me = getProfile().nickname;
+  ol.replaceChildren(...rows.map((r) => {
+    const li = document.createElement('li');
+    if (me && r.nickname === me) li.className = 'me';
+    const name = document.createElement('span');
+    name.textContent = r.nickname;
+    const s = document.createElement('span');
+    s.className = 's';
+    s.textContent = Number(r.best_score).toLocaleString('en-US');
+    li.append(name, s);
+    return li;
+  }));
+}
+
+// Leaderboard screen opened from the start screen.
+async function showLeaderboardScreen() {
+  const status = $('#lb-status'), ol = $('#lb-list');
+  if (!status || !ol) return;   // page HTML from an older cached version
+  ol.replaceChildren();
+  status.textContent = 'Loading…';
+  status.hidden = false;
+  show('leaderboard');
+  const rows = await fetchLeaderboard();
+  if (rows === null) status.textContent = "Couldn't load the leaderboard right now. Please try again later.";
+  else if (!rows.length) status.textContent = 'No scores yet – be the first!';
+  else { status.hidden = true; fillLeaderboard(ol, rows); }
 }
 
 // ---------- wiring ----------
@@ -372,6 +389,7 @@ const actions = {
   'profile-continue': submitProfile,
   'instructions-start': () => { if (instructionsMode === 'first') playGame(); else show('results'); },
   'main-start': () => {},            // handled by waitForClick
+  leaderboard: showLeaderboardScreen,
   'play-again': () => playGame(),
   'edit-profile': () => showProfile(() => showResults()),
   'how-to-play': () => showInstructions('view'),

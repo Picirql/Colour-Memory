@@ -2,7 +2,7 @@
 // Change values here only. Bump APP_VERSION on any code change after launch.
 
 export const CONFIG = {
-  APP_VERSION: '1.0.0',
+  APP_VERSION: '1.0.1',
   SUPABASE_URL: 'https://xhxlnpnzwmurimqvmegf.supabase.co',
   SUPABASE_KEY: 'sb_publishable_qsQR6T8fX2bYO2BTmJRxHw_Yr4pVdPo',   // public key only (insert-only)
   EMAIL_SALT: 'cmg-75a8217d3f205736',

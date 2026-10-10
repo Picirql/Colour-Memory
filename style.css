@@ -92,6 +92,7 @@ h3 { font-size: 1.05rem; margin: 24px 0 8px; }
   color: var(--text);
   cursor: pointer;
 }
+.btn + .btn { margin-top: 12px; }
 .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
 .btn:focus-visible, .chip:focus-visible, .link:focus-visible, input:focus-visible { outline: 3px solid #9bbcf5; outline-offset: 2px; }
 
