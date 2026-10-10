@@ -3,8 +3,8 @@
 
 export const CONFIG = {
   APP_VERSION: '1.0.0',
-  SUPABASE_URL: 'https://YOUR-PROJECT-REF.supabase.co',   // filled in by the user
-  SUPABASE_KEY: 'YOUR-PUBLIC-ANON-OR-PUBLISHABLE-KEY',     // public key only
+  SUPABASE_URL: 'https://xhxlnpnzwmurimqvmegf.supabase.co',
+  SUPABASE_KEY: 'sb_publishable_qsQR6T8fX2bYO2BTmJRxHw_Yr4pVdPo',   // public key only (insert-only)
   EMAIL_SALT: 'stat3-colourmem-2026',
 
   // design
