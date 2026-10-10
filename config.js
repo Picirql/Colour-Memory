@@ -5,7 +5,7 @@ export const CONFIG = {
   APP_VERSION: '1.0.0',
   SUPABASE_URL: 'https://xhxlnpnzwmurimqvmegf.supabase.co',
   SUPABASE_KEY: 'sb_publishable_qsQR6T8fX2bYO2BTmJRxHw_Yr4pVdPo',   // public key only (insert-only)
-  EMAIL_SALT: 'stat3-colourmem-2026',
+  EMAIL_SALT: 'cmg-75a8217d3f205736',
 
   // design
   SET_SIZES: [1, 2, 3, 4, 6, 8],
