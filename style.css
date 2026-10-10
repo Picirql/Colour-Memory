@@ -142,8 +142,22 @@ details.about summary { cursor: pointer; min-height: 44px; display: flex; align-
 }
 .chip[aria-pressed=true] { background: var(--chip-on); border-color: var(--accent); color: var(--accent); font-weight: 600; }
 
-.steps { padding-left: 1.3em; margin: 0 0 12px; }
-.steps li { margin-bottom: 8px; }
+/* How to play: one small picture of the screen per step */
+.howto { list-style: none; counter-reset: step; padding: 0; margin: 0 0 16px; }
+.howto li { counter-increment: step; display: flex; gap: 14px; align-items: center; margin-bottom: 14px; }
+.howto li > div:last-child::before { content: counter(step) ". "; font-weight: 700; }
+.demo { position: relative; flex: 0 0 76px; width: 76px; height: 76px; border-radius: 10px; background: var(--grey); overflow: hidden; }
+.demo .fix::before, .demo .fix::after { content: ""; position: absolute; left: 50%; top: 50%; background: #1a1a1a; transform: translate(-50%, -50%); }
+.demo .fix::before { width: 14px; height: 2px; }
+.demo .fix::after { width: 2px; height: 14px; }
+.demo .sq { position: absolute; width: 18%; height: 18%; }
+.demo .sq.box { left: 0; top: 0; outline: 2px solid #1a1a1a; outline-offset: -1px; }
+.demo .ring { position: absolute; inset: 4px; border-radius: 50%;
+  -webkit-mask: radial-gradient(circle, transparent 58%, #000 60%); mask: radial-gradient(circle, transparent 58%, #000 60%); }
+.demo .tick { position: absolute; right: 4px; top: 36%; width: 9px; height: 2px; background: #1a1a1a; transform: rotate(-30deg); }
+.demo .pts { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 14px; }
+.tips { margin: 0 0 8px; padding: 12px 12px 12px 30px; background: #f1f4fa; border-radius: 10px; font-size: .95rem; }
+.tips li { margin-bottom: 4px; }
 
 .score { font-size: 3.4rem; font-weight: 800; text-align: center; margin: 0; line-height: 1.1; font-variant-numeric: tabular-nums; }
 .pb { margin: 4px 0 0; color: var(--muted); }

@@ -19,6 +19,7 @@
       <h1>How good is your colour memory?</h1>
       <p class="lead">A 2-minute game. Coloured squares flash for a split second &ndash; remember them, then pick the colour you saw.</p>
       <button class="btn primary" data-action="play">Play</button>
+      <button class="btn" data-action="how-to-play">How to play</button>
       <button class="btn" data-action="leaderboard">Leaderboard</button>
       <details class="about">
         <summary>About this study</summary>
@@ -70,12 +71,38 @@
   <section id="screen-instructions" class="screen" hidden>
     <div class="card">
       <h2>How to play</h2>
-      <ol class="steps">
-        <li>Keep your eyes on the <b>+</b> in the middle.</li>
-        <li>Coloured squares will flash very briefly. Try to remember their colours.</li>
-        <li>One spot will be outlined. Pick the colour that was there on the colour wheel. Move around the wheel to preview, then click / lift your finger.</li>
-        <li>No rush &ndash; accuracy is what counts. Harder rounds (more squares) score more.</li>
+      <ol class="howto">
+        <li>
+          <div class="demo" aria-hidden="true"><span class="fix"></span></div>
+          <div><b>Look at the + in the middle.</b> A new round is about to start.</div>
+        </li>
+        <li>
+          <div class="demo" aria-hidden="true">
+            <span class="sq" style="left:14%;top:22%;background:#f9557f"></span>
+            <span class="sq" style="left:62%;top:16%;background:#4998c7"></span>
+            <span class="sq" style="left:40%;top:62%;background:#9b9425"></span>
+          </div>
+          <div><b>Coloured squares flash for a split second.</b> Remember each square&rsquo;s colour <i>and</i> where it was.</div>
+        </li>
+        <li>
+          <div class="demo" aria-hidden="true"><span class="ring"></span><span class="sq box" style="left:62%;top:16%"></span></div>
+          <div><b>The squares disappear and one empty box is outlined.</b> That&rsquo;s where one of the squares was. A colour wheel appears around the screen.</div>
+        </li>
+        <li>
+          <div class="demo" aria-hidden="true"><span class="ring"></span><span class="sq box" style="left:62%;top:16%;background:#4998c7"></span><span class="tick"></span></div>
+          <div><b>Pick the colour that was in that box.</b> Move your mouse or finger around the wheel &ndash; the box fills with that colour. Click, or lift your finger, to choose.</div>
+        </li>
+        <li>
+          <div class="demo" aria-hidden="true"><span class="ring"></span><span class="sq box" style="left:62%;top:16%;background:#4998c7"></span><span class="pts">+85</span></div>
+          <div><b>See how close you were.</b> The box shows the right colour, and the closer your pick, the more points you get.</div>
+        </li>
       </ol>
+      <ul class="tips">
+        <li>No time limit for picking &ndash; take your time.</li>
+        <li>The wheel turns every round, so remember the <b>colour</b>, not where it was on the wheel.</li>
+        <li>More squares = harder rounds = more points.</li>
+      </ul>
+      <p class="muted small" id="practice-note">Your first game starts with 3 practice rounds that don&rsquo;t count.</p>
       <button class="btn primary" data-action="instructions-start">Start</button>
     </div>
   </section>

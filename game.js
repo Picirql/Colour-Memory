@@ -1,6 +1,6 @@
 // Screen flow, practice + 24 main trials, scoring and results (spec Sections 4, 8, 9, 12).
 import { CONFIG } from './config.js';
-import { checkHueTable } from './color.js';
+import { checkHueTable, HUES } from './color.js';
 import { mainSchedule, generateTrial, scoreResponse, MAX_SCORE } from './stimuli.js';
 import { estimateFrameInterval } from './timing.js';
 import { resizeCanvas, viewportTooSmall, setProgress, setScene, drawMessage, drawColourCheck, runTrial, cancelInput } from './trial.js';
@@ -163,13 +163,17 @@ async function submitProfile() {
 }
 
 // ---------- instructions ----------
-let instructionsMode = 'first';   // 'first' (before first game) or 'view' (from results)
+let instructionsMode = 'first';   // 'first' (before first game) or 'view' (from start/results)
+let instructionsReturn = 'welcome';
 
 function showInstructions(mode) {
   instructionsMode = mode;
+  instructionsReturn = currentScreen || 'welcome';
   $('[data-action="instructions-start"]').textContent = mode === 'first'
     ? (isFirstGame() ? 'Start with 3 practice rounds' : 'Start')
     : 'Back';
+  const note = $('#practice-note');
+  if (note) note.hidden = !(mode === 'view' && isFirstGame());
   show('instructions');
   if (mode === 'first') simAuto(() => playGame());
 }
@@ -387,7 +391,7 @@ const actions = {
     else startFromWelcome();
   },
   'profile-continue': submitProfile,
-  'instructions-start': () => { if (instructionsMode === 'first') playGame(); else show('results'); },
+  'instructions-start': () => { if (instructionsMode === 'first') playGame(); else show(instructionsReturn); },
   'main-start': () => {},            // handled by waitForClick
   leaderboard: showLeaderboardScreen,
   'play-again': () => playGame(),
@@ -403,6 +407,9 @@ document.addEventListener('click', (e) => {
 });
 
 document.querySelectorAll('.about-text').forEach((p) => { p.textContent = ABOUT_TEXT; });
+// the small colour wheels in "How to play" use the game's real hues
+const wheelCss = `conic-gradient(${[...Array(37).keys()].map((i) => HUES[(i * 10) % 360]).join(', ')})`;
+document.querySelectorAll('.demo .ring').forEach((r) => { r.style.background = wheelCss; });
 
 window.addEventListener('resize', () => { if (!canvas.hidden) resizeCanvas(); updateSmallOverlay(); });
 window.addEventListener('pagehide', flushOnPageHide);
