@@ -8,7 +8,7 @@ import {
   isStorageOk, getDeviceId, isFirstGame, markPracticeDone, nextGameNumber,
   hasProfile, getProfile, saveProfile, getBestScore, saveBestScore, hashEmail, NICKNAME_RE, EMAIL_RE,
 } from './identity.js';
-import { enqueueRow, enqueueTrial, closeBatches, flush, flushOnPageHide, fetchLeaderboard, disableUploads } from './storage.js';
+import { enqueueRow, enqueueTrial, closeBatches, flush, flushOnPageHide, fetchLeaderboard, disableUploads, whenIdle } from './storage.js';
 import { FLAGS, IS_TEST, initDebug, debugFrame, debugTrial } from './debug.js';
 
 const ABOUT_TEXT = 'Your answers (which colours you picked and how long you took) are recorded anonymously. '
@@ -19,7 +19,6 @@ const ABOUT_TEXT = 'Your answers (which colours you picked and how long you took
 const $ = (sel) => document.querySelector(sel);
 const canvas = $('#stage');
 const smallScreen = $('#screen-small');
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const simAuto = (fn, ms = 400) => { if (FLAGS.sim) setTimeout(fn, ms); };
 
 let currentScreen = null;
@@ -342,7 +341,7 @@ async function showResults() {
 
   // leaderboard: give the result row a moment to arrive first
   $('#r-leaderboard-wrap').hidden = true;
-  await Promise.race([flush(), sleep(3000)]);
+  await whenIdle(6000);
   const rows = await fetchLeaderboard();
   if (rows && rows.length) {
     const me = getProfile().nickname;

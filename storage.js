@@ -120,6 +120,14 @@ export async function flush() {
   }
 }
 
+// Resolves once every queued item is stored (or timeoutMs passes), e.g. so the
+// leaderboard includes the game that just ended.
+export async function whenIdle(timeoutMs) {
+  const deadline = performance.now() + timeoutMs;
+  flush();
+  while ((queue.length || inFlight) && performance.now() < deadline) await sleep(200);
+}
+
 // Best-effort send of everything on pagehide. Items stay queued; if they did arrive, the
 // retry on the next page load gets a 409 and is dropped.
 export function flushOnPageHide() {
