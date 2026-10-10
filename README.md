@@ -1,6 +1,6 @@
 # Colour Memory Game
 
-**Play:** https://picirql.github.io/Visual-Memory-Project/
+**Play:** https://picirql.github.io/Colour-Memory/
 
 A two-minute browser game that measures visual working memory. Coloured squares flash on screen for a split second, and you then pick the colour of one of them from a colour wheel. Each game has 24 rounds with 1 to 8 squares, and harder rounds score more.
 
