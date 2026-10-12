@@ -396,6 +396,7 @@ const actions = {
   leaderboard: showLeaderboardScreen,
   'play-again': () => playGame(),
   'edit-profile': () => showProfile(() => showResults()),
+  'edit-profile-start': () => showProfile(() => show('welcome')),   // separate name so an older cached game.js ignores it
   'how-to-play': () => showInstructions('view'),
   about: () => show('about'),
   back: () => show(previousScreen || 'welcome'),
