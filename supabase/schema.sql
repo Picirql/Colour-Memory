@@ -81,10 +81,12 @@ create policy anon_insert_sessions on public.sessions     for insert to anon wit
 create policy anon_insert_trials   on public.trials       for insert to anon with check (true);
 create policy anon_insert_results  on public.game_results for insert to anon with check (true);
 
--- 5. Leaderboard: the ONLY public read path. Returns nickname + best score only.
+-- 5. Leaderboard: the ONLY public read paths. They return nickname, best score and rank only.
 --    One entry per nickname (case-insensitive): the best complete, non-test game played under it.
-create or replace function public.get_leaderboard(limit_n int default 10)
-returns table (nickname text, best_score int)
+
+-- Internal: the ranked leaderboard. Not callable by the public; used by the two functions below.
+create or replace function public.leaderboard_entries()
+returns table (nickname text, best_score int, rank int, total_players int)
 language sql
 security definer
 set search_path = public
@@ -105,10 +107,38 @@ as $$
     from complete
     order by lower(nickname), score desc, created_at asc
   )
-  select nickname, score from best
-  order by score desc
+  select nickname, score,
+         (rank() over (order by score desc))::int,
+         (count(*) over ())::int
+  from best;
+$$;
+revoke all on function public.leaderboard_entries() from public, anon, authenticated;
+
+-- Top N (at most 50).
+create or replace function public.get_leaderboard(limit_n int default 10)
+returns table (nickname text, best_score int)
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select nickname, best_score from public.leaderboard_entries()
+  order by rank, nickname
   limit least(greatest(limit_n, 1), 50);
 $$;
-
 revoke all on function public.get_leaderboard(int) from public;
 grant execute on function public.get_leaderboard(int) to anon;
+
+-- One nickname's rank, so players outside the top 10 can see where they stand.
+create or replace function public.get_player_rank(nick text)
+returns table (rank int, best_score int, total_players int)
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select rank, best_score, total_players from public.leaderboard_entries()
+  where lower(nickname) = lower(nick);
+$$;
+revoke all on function public.get_player_rank(text) from public;
+grant execute on function public.get_player_rank(text) to anon;

@@ -188,3 +188,5 @@ details.about summary { cursor: pointer; min-height: 44px; display: flex; align-
   border-radius: 4px;
   pointer-events: none;
 }
+.leaderboard li.gap { list-style: none; color: var(--muted); padding: 0; line-height: 1; }
+.lb-total { margin: 6px 0 0; text-align: center; }

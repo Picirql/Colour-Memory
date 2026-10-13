@@ -355,19 +355,58 @@ async function showResults() {
   if (FLAGS.sim && ++simGamesPlayed < FLAGS.simGames) setTimeout(() => playGame(), 1500);
 }
 
-function fillLeaderboard(ol, rows) {
+// The player's own rank (null if unavailable). Kept in game.js rather than storage.js so a
+// browser holding an older cached storage.js can still load this file.
+async function fetchPlayerRank(nick) {
+  try {
+    const res = await fetch(`${CONFIG.SUPABASE_URL}/rest/v1/rpc/get_player_rank`, {
+      method: 'POST',
+      headers: { apikey: CONFIG.SUPABASE_KEY, Authorization: `Bearer ${CONFIG.SUPABASE_KEY}`, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nick }),
+    });
+    if (!res.ok) return null;
+    const rows = await res.json();
+    return Array.isArray(rows) && rows.length ? rows[0] : null;
+  } catch { return null; }
+}
+
+function leaderboardRow(nickname, score, isMe) {
+  const li = document.createElement('li');
+  if (isMe) li.className = 'me';
+  const name = document.createElement('span');
+  name.textContent = nickname;
+  const s = document.createElement('span');
+  s.className = 's';
+  s.textContent = Number(score).toLocaleString('en-US');
+  li.append(name, s);
+  return li;
+}
+
+// Top 10, plus the player's own rank below a gap when they are outside it.
+async function fillLeaderboard(ol, rows) {
   const me = getProfile().nickname;
-  ol.replaceChildren(...rows.map((r) => {
-    const li = document.createElement('li');
-    if (me && r.nickname === me) li.className = 'me';
-    const name = document.createElement('span');
-    name.textContent = r.nickname;
-    const s = document.createElement('span');
-    s.className = 's';
-    s.textContent = Number(r.best_score).toLocaleString('en-US');
-    li.append(name, s);
-    return li;
-  }));
+  const isMe = (n) => !!me && n.toLowerCase() === me.toLowerCase();
+  ol.replaceChildren(...rows.map((r) => leaderboardRow(r.nickname, r.best_score, isMe(r.nickname))));
+  let total = ol.nextElementSibling;
+  if (!total || !total.classList.contains('lb-total')) {
+    total = document.createElement('p');
+    total.className = 'lb-total muted small';
+    ol.after(total);
+  }
+  total.hidden = true;
+  if (!me) return;
+  const mine = await fetchPlayerRank(me);
+  if (!mine) return;
+  if (!rows.some((r) => isMe(r.nickname))) {
+    const gap = document.createElement('li');
+    gap.className = 'gap';
+    gap.textContent = '…';
+    const row = leaderboardRow(me, mine.best_score, true);
+    row.value = mine.rank;
+    ol.append(gap, row);
+  }
+  total.textContent = `${mine.total_players.toLocaleString('en-US')} players on the leaderboard`;
+  total.hidden = false;
 }
 
 // Leaderboard screen opened from the start screen.
