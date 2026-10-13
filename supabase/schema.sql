@@ -82,6 +82,7 @@ create policy anon_insert_trials   on public.trials       for insert to anon wit
 create policy anon_insert_results  on public.game_results for insert to anon with check (true);
 
 -- 5. Leaderboard: the ONLY public read path. Returns nickname + best score only.
+--    One entry per nickname (case-insensitive): the best complete, non-test game played under it.
 create or replace function public.get_leaderboard(limit_n int default 10)
 returns table (nickname text, best_score int)
 language sql
@@ -90,8 +91,7 @@ set search_path = public
 stable
 as $$
   with complete as (
-    select g.session_id, g.score, s.nickname, s.created_at,
-           coalesce(s.email_hash, s.device_id::text) as player_key
+    select g.score, s.nickname, s.created_at
     from game_results g
     join sessions s using (session_id)
     where s.nickname is not null
@@ -101,9 +101,9 @@ as $$
            where t.session_id = g.session_id and not t.is_practice) = 24
   ),
   best as (
-    select distinct on (player_key) player_key, nickname, score
+    select distinct on (lower(nickname)) nickname, score
     from complete
-    order by player_key, score desc, created_at asc
+    order by lower(nickname), score desc, created_at asc
   )
   select nickname, score from best
   order by score desc

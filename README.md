@@ -24,7 +24,7 @@ The colours lie on a circle in CIELAB colour space (L\* = 60, centre (15, 12), r
 - Your browser gets a random anonymous ID so repeat games can be linked.
 - If you enter an email, only a salted SHA-256 hash of it is stored, never the email itself. It's used to link games played on different devices.
 - Nickname, age group and colour-vision answers are optional.
-- Nickname and best score appear on the public leaderboard, and only if you choose a nickname.
+- Nickname and best score appear on the public leaderboard (one entry per nickname), and only if you choose a nickname.
 - No names, locations, IP addresses, analytics, trackers or cookies.
 
 Data goes to a Supabase (PostgreSQL) database. The public key in `config.js` can only **add** rows: it can't read, change or delete anything. The only public read access is the leaderboard (nickname and best score).
